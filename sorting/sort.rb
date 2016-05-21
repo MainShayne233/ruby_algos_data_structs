@@ -42,6 +42,18 @@ class Sort
     list
   end
 
+  def self.insert_sort(list)
+    (0..list.end).each do |index|
+      break if index > 0 and list[index] > list[index-1]
+      (0..index-1).reverse_each do |sub_index|
+        if list[index] > list[sub_index]
+          list.insert(sub_index+1, list.pop(index))
+        end
+      end
+    end
+    list
+  end
+
 end
 
 
@@ -67,4 +79,4 @@ def benchmark(sorting_methods)
   end
 end
 
-benchmark ['bubble_sort', 'select_sort']
+print Sort.insert_sort(random_list)
