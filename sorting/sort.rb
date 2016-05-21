@@ -1,3 +1,5 @@
+require 'byebug'
+
 class Array
   def sorted?
     self == self.sort
@@ -43,16 +45,25 @@ class Sort
   end
 
   def self.insert_sort(list)
-    (0..list.end).each do |index|
-      break if index > 0 and list[index] > list[index-1]
-      (0..index-1).reverse_each do |sub_index|
+    (1..list.end).each do |index|
+      if list[index] > list[index - 1]
+        next
+      elsif list[index] < list[0]
+        list.insert(0, list[index])
+        list.delete_at(index + 1)
+      end
+      (0..index - 1).reverse_each do |sub_index|
         if list[index] > list[sub_index]
-          list.insert(sub_index+1, list.pop(index))
+          list.insert(sub_index+1, list[index])
+          list.delete_at(index+1)
+          break
         end
       end
     end
     list
   end
+
+
 
 end
 
@@ -66,7 +77,7 @@ def benchmark(sorting_methods)
   times = {}
   sorting_methods.each {|method| times[method] = []}
   100.times do
-    list = random_list
+    list = random_list(length: 10000)
     sorting_methods.each do |method|
       start = Time.now
       Sort.send("#{method}", Array.new(list))
@@ -79,4 +90,6 @@ def benchmark(sorting_methods)
   end
 end
 
-print Sort.insert_sort(random_list)
+
+
+benchmark %w(insert_sort select_sort bubble_sort)
