@@ -30,7 +30,7 @@ class Sort
   end
 
   def self.select_sort(list)
-    (0..list.count - 1).each do |start_index|
+    (0..list.end).each do |start_index|
       min_swap = list[start_index]
       min_swap_index = start_index
       (start_index..list.end).each do |index|
@@ -44,7 +44,7 @@ class Sort
     list
   end
 
-  def self.insert_sort(list)
+  def self.insert_sort1(list)
     (1..list.end).each do |index|
       if list[index] > list[index - 1]
         next
@@ -56,6 +56,20 @@ class Sort
         if list[index] > list[sub_index]
           list.insert(sub_index+1, list[index])
           list.delete_at(index+1)
+          break
+        end
+      end
+    end
+    list
+  end
+
+  def self.insert_sort2(list)
+    (1..list.end).each do |index|
+      (0..index-1).reverse_each do |previous_index|
+        print list
+        puts
+        if list[index] > list[previous_index]
+          list.swap!(index, previous_index+1)
           break
         end
       end
@@ -77,7 +91,7 @@ def benchmark(sorting_methods)
   times = {}
   sorting_methods.each {|method| times[method] = []}
   100.times do
-    list = random_list(length: 10000)
+    list = random_list(length: 1000)
     sorting_methods.each do |method|
       start = Time.now
       Sort.send("#{method}", Array.new(list))
@@ -90,6 +104,6 @@ def benchmark(sorting_methods)
   end
 end
 
+list = random_list(length: 10)
 
-
-benchmark %w(insert_sort select_sort bubble_sort)
+puts list.sort == Sort.insert_sort2(list)
